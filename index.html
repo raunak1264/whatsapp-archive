@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; connect-src 'self' https://www.googleapis.com https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="theme-color" content="#00a884">
+<title>WhatsApp Archive</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+
+<!-- Signed-out screen: the only thing anyone sees without your Google sign-in -->
+<section class="gate" id="gate">
+  <div class="gate-card">
+    <img class="gate-logo" src="icon.svg" alt="">
+    <h1>WhatsApp Archive</h1>
+    <p id="gate-text">Sign in with the Google account that holds your archive.</p>
+    <button class="gbtn" id="signin" disabled>
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.9 6.2C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-7.9-6.2A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l8-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-8 6.2C6.6 42.6 14.6 48 24 48z"/></svg>
+      <span>Sign in with Google</span>
+    </button>
+    <p class="gate-note" id="gate-note"></p>
+    <p class="gate-fine">
+      Your chats stay in your own Google Drive. This page keeps nothing on this device:
+      it signs you out after 15 minutes without use, when the session ends, or when you close it.
+    </p>
+  </div>
+</section>
+
+<!-- The archive (hidden until signed in and loaded) -->
+<div class="app" id="app" hidden>
+  <aside class="side">
+    <header class="side-head">
+      <div class="brand">
+        <img class="logo" src="icon.svg" alt="">
+        <div class="brand-t">
+          <h1>WhatsApp Archive</h1>
+          <p id="stats"></p>
+        </div>
+        <select id="archive-pick" class="archive-pick" aria-label="Archive" hidden></select>
+        <button class="icon-btn" id="lock" title="Lock now" aria-label="Lock now">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-7-2a2 2 0 1 1 4 0v2h-4V7z"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="searchbar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 9.5 16a6.5 6.5 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/></svg>
+      <input id="q" type="search" placeholder="Search chats and messages" autocomplete="off" spellcheck="false">
+      <button id="clear" class="clear" aria-label="Clear search" hidden>
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg>
+      </button>
+    </div>
+    <nav class="chips" id="chips" aria-label="Filters"></nav>
+    <div class="list" id="list" role="list"></div>
+  </aside>
+
+  <main class="pane" id="pane">
+    <div class="welcome" id="welcome">
+      <div class="welcome-art"><img src="icon.svg" alt=""></div>
+      <h2>Your WhatsApp archive</h2>
+      <p id="welcome-text"></p>
+      <p class="hint">Pick a chat on the left, or use the filters to browse photos, videos, documents, links and voice notes.</p>
+      <p class="lock-note">Read from your Google Drive. Nothing is saved on this device.</p>
+    </div>
+    <section class="chat" id="chat" hidden></section>
+  </main>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <div class="lb-top">
+    <div class="lb-meta" id="lb-meta"></div>
+    <div class="lb-actions">
+      <a id="lb-open" target="_blank" rel="noopener noreferrer" title="Open original">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M14 3v2h3.6l-9.8 9.8 1.4 1.4L19 6.4V10h2V3h-7zm5 16H5V5h7V3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-7h-2v7z"/></svg>
+      </a>
+      <button id="lb-goto" title="Show in chat">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>
+      </button>
+      <button id="lb-close" title="Close (Esc)">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg>
+      </button>
+    </div>
+  </div>
+  <button class="lb-nav prev" id="lb-prev" aria-label="Previous">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4L10.8 12z"/></svg>
+  </button>
+  <div class="lb-stage" id="lb-stage"></div>
+  <button class="lb-nav next" id="lb-next" aria-label="Next">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M8.6 16.6 10 18l6-6-6-6-1.4 1.4 4.6 4.6z"/></svg>
+  </button>
+  <div class="lb-caption" id="lb-caption"></div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

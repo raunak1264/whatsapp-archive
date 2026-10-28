@@ -1,0 +1,7 @@
+.DS_Store
+._*
+*.json.gz
+media/
+web/
+*.sqlite
+*.zip
